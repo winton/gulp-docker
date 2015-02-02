@@ -1,0 +1,19 @@
+{
+  "name": "gulp-docker",
+  "version": "0.0.0",
+  "main": "lib/gulp-docker.js",
+  "dependencies": {
+    "bluebird": "^2.3.11",
+    "coffee-script": "^1.8.0",
+    "dockerode": "^2.0.4",
+    "gulp": "^3.8.10",
+    "require-directory": "^2.0.0"
+  },
+  "devDependencies": {
+    "codo": "",
+    "jasmine": "^2.1.1"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
