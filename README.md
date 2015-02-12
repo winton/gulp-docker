@@ -11,10 +11,10 @@ Within your `Gulpfile`, initialize `GulpDocker` with an instance of gulp and con
 
 	new GulpDocker(gulp, {
 		sidekick: {
-			app: "git@github.com:winton/sidekick.git#release",
 			command: "bin/sidekick",
-			env: { ENV: "production" },
-			repo: "quay.io/winton/sidekick"
+			env:     { ENV: "production" },
+			git:     "git@github.com:winton/sidekick.git#release",
+			repo:    "quay.io/winton/sidekick"
 		}
 	});
 
@@ -24,9 +24,9 @@ Each key of the object is the container name.
 
 Each value of the object is another object with the following possible keys:
 
-* `app` - A git repository URL string (required).
 * `command` - The command to run within the Docker container (optional).
 * `env` - Object containing environmental variables (optional).
+* `git` - A git repository URL string (required).
 * `ports` - An array of port strings in "[host-port]:[container-port]" format (optional).
 * `repo` - The Docker repository to push to on build (optional).
 * `volumes` - An array of volume strings in "[host-dir]:[container-dir]:[rw|ro]" format (optional).

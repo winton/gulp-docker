@@ -9,7 +9,7 @@ module.exports = (Docker) ->
     # @param [Object] @container container configuration object
     #
     constructor: (@container) ->
-      @container = new Docker.Api.Container(@container)
+      @api = new Docker.Api.Container(@container)
 
     # List Docker containers.
     #
@@ -17,7 +17,7 @@ module.exports = (Docker) ->
     # @return [Array<Object>]
     #
     ps: (options) ->
-      @container.list(options)
+      @api.list(options)
 
     # Run a Docker container.
     #
@@ -42,4 +42,4 @@ module.exports = (Docker) ->
       if options.force == undefined
         options.force = true
 
-      @container.remove(options)
+      @api.remove(options)

@@ -28,7 +28,7 @@ class Ask
     rl = @readlineInterface()
 
     new Promise((resolve) ->
-      rl.question question + " ", (answer) ->
+      rl.question "\n#{question} ", (answer) ->
         rl.close()
         resolve(answer)
     )

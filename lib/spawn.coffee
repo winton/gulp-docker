@@ -16,8 +16,7 @@ class Spawn
   # @option options [String] cwd current working directory of the child process
   #
   constructor: (@options={}) ->
-    @options.stdio ||= "pipe"
-    @options.cwd     = path.normalize(
+    @options.cwd = path.normalize(
       "#{__dirname}/../#{@options.cwd || ""}"
     )
 
@@ -49,8 +48,12 @@ class Spawn
       proc.stderr.on "data", (data) ->
         output += data
 
-    new Promise (resolve, reject) ->
-      proc.on 'close', (code) ->
+    new Promise (resolve, reject) =>
+      proc.on 'close', (code) =>
+        if @options.stdio == "inherit"
+          console.log ""
         resolve(output, code)
 
-module.exports = (new Spawn()).spawn
+module.exports = (stdio="pipe") ->
+  spawn = new Spawn(stdio: stdio)
+  spawn.spawn.bind(spawn)
