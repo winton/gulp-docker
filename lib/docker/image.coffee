@@ -18,10 +18,10 @@ module.exports = (Docker) ->
           """
           git clone -b #{@container.branch} \
             --single-branch #{@container.git} \
-            tmp/#{@container.name}
+            .tmp/#{@container.name}
           """
-        mkdir: "mkdir -p tmp/#{@container.name}"
-        rmrf:  "rm -rf tmp/#{@container.name}"
+        mkdir: "mkdir -p .tmp/#{@container.name}"
+        rmrf:  "rm -rf .tmp/#{@container.name}"
         rmi:   "docker rmi #{@container.name}"
         sha:   "git rev-parse HEAD"
 
@@ -62,7 +62,7 @@ module.exports = (Docker) ->
       """
       docker build \
         -t #{@container.repo}:#{sha} \
-        tmp/#{@container.name}
+        .tmp/#{@container.name}
       """
 
     # Generates the docker push command.
