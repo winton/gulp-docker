@@ -25,12 +25,15 @@ class Docker
   askForContainers: (question_type) ->
     [ containers, questions ] = @containerStrings()
 
-    questions.push("\nPlease enter number(s) of #{question_type}:")
+    questions.push("\nEnter number(s) of #{question_type} (enter for all):")
 
-    ask(questions.join("\n"), /\d/).then(
-      (input) -> input.match(/\d/g)
-    ).map(
-      (index) -> containers[parseInt(index) - 1]
+    ask(questions.join("\n"), /(\d|\s*)/).then(
+      (input) -> 
+        if input == ""
+          containers
+        else
+          input.match(/\d/g).map (index) ->
+            containers[parseInt(index) - 1]
     )
 
   # Helper method to ask if the user wants to push images to

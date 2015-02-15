@@ -12,7 +12,12 @@ module.exports = (Docker) ->
     constructor: (@container) ->
       @client = new Docker.Api.Client()
 
-      @api_container = @find((container) =>
+    # Retrieve the Dockerode container API object.
+    #
+    # @return [Promise<Container>]
+    #
+    containerApi: ->
+      @find((container) =>
         container.Names.indexOf("/#{@container.name}") > -1
       ).then (container) =>
         @client.getContainer(container.Id) if container
@@ -23,7 +28,7 @@ module.exports = (Docker) ->
     # @return [Promise<Container>]
     #
     create: (params) ->
-      @api_container = Promise.resolve(
+      Promise.resolve(
         @client.createContainer(params)
       )
 
@@ -51,7 +56,7 @@ module.exports = (Docker) ->
     # @return [Object] response from `Dockerode::Container#remove`
     #
     remove: (options) ->
-      @api_container.then (container) ->
+      @containerApi().then (container) ->
         if container
           Promise.promisify(container.remove, container)(options)
 
@@ -61,6 +66,6 @@ module.exports = (Docker) ->
     # @return [Object] response from `Dockerode::Container#start`
     #
     start: ->
-      @api_container.then (container) ->
+      @containerApi().then (container) ->
         if container
           Promise.promisify(container.start, container)()

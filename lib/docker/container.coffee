@@ -28,11 +28,11 @@ module.exports = (Docker) ->
       args = new Docker.Args(@container)
 
       @rm().then(=>
-        @container.create(
+        @api.create(
           args.apiParams()
         )
       ).then =>
-        @container.start()
+        @api.start()
 
     # Remove a Docker container.
     #

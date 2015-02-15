@@ -1,3 +1,5 @@
+path = require "path"
+
 module.exports = (Docker) -> 
 
   # Generates arguments for Docker CLI and remote API.
@@ -9,7 +11,6 @@ module.exports = (Docker) ->
     # @param [Object] @container container object
     #
     constructor: (@container) ->
-      console.log @container
 
     # Generates parameters for a Docker remote API call.
     #
@@ -31,20 +32,10 @@ module.exports = (Docker) ->
     # @return [Object]
     #
     binds: ->
-      binds = []
-      env   = @container.env
-
-      binds.push(
-        "#{env.APP_PATH || process.cwd()}:/app"
-      ) if !env.ENV || env.ENV == "development"
-      binds.push(
-        "#{env.DOCKER_CERT_PATH}:/certs/docker"
-      ) if env.DOCKER_CERT_PATH
-      binds.push(
-        "#{env.DOCKER_SOCKET_PATH}:/var/run/host"
-      ) if env.DOCKER_SOCKET_PATH
-
-      binds
+      @container.volumes.map (volume) ->
+        [ host, container ] = volume.split(":")
+        host = path.resolve(host)
+        "#{host}:#{container}"
 
     # Generates parameters for a Docker CLI call.
     #
@@ -101,6 +92,6 @@ module.exports = (Docker) ->
     portBindings: ->
       ports = {}
       for port in @container.ports
-        [ host_port, container_port ]  = port
+        [ host_port, container_port ]  = port.split(":")
         ports["#{container_port}/tcp"] = [ HostPort: host_port ]
       ports
