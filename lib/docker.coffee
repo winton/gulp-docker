@@ -18,9 +18,9 @@ class Docker
   # Helper method to list the containers and then ask questions.
   #
   # @param [String] question_type "images to build" or "containers
-  # to run"
+  #   to run"
   # @return [Promise<Array>] promise that returns an array of
-  # containers
+  #   containers
   #
   askForContainers: (question_type) ->
     [ containers, questions ] = @containerStrings()
@@ -41,7 +41,7 @@ class Docker
   #
   # @param [Array] containers an array of container objects
   # @return [Promise<Array>]promise that returns an array of
-  # containers
+  #   containers
   #
   askForPush: (containers) ->
     ask("Push to docker registry?", /[yYnN]/).then(
@@ -123,6 +123,17 @@ class Docker
     ).each(
       (container) =>
         new Docker.Container(container).run()
+    )
+
+  # Asks which Docker containers to stop and stops them.
+  #
+  stop: ->
+    @askForContainers("containers to stop").map(
+      (container) =>
+        @modifyContainer(container)
+    ).each(
+      (container) =>
+        new Docker.Container(container).rm()
     )
 
 require("./docker/api")(Docker)

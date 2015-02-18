@@ -9,8 +9,10 @@ module.exports = (Docker) ->
     # Initializes `@container`.
     #
     # @param [Object] @container container object
+    # @param [String] @run_key the container key to use for the
+    #  command (typically "run" or "build")
     #
-    constructor: (@container) ->
+    constructor: (@container, @run_key="run") ->
 
     # Generates parameters for a Docker remote API call.
     #
@@ -18,8 +20,8 @@ module.exports = (Docker) ->
     #
     apiParams: ->
       name:  @container.name
-      Cmd:   @container.command
-      Image: "#{@container.repo}:latest"
+      Cmd:   @container[@run_key]
+      Image: "#{@container.repo}:#{@container.tag}"
       Env:   @envs()
       HostConfig:
         Binds: @binds()
@@ -60,7 +62,7 @@ module.exports = (Docker) ->
           )
 
       params.push(Docker.repoName(@name))
-      params.concat(@command)
+      params.concat(@container[@run_key])
 
     # Generate environment variables to be passed to the container.
     #

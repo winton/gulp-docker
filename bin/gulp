@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# AWS API depends on correct time:
+#
+# https://github.com/boot2docker/boot2docker/issues/608
+#
+if hash boot2docker 2>/dev/null; then
+	boot2docker ssh "sudo ntpclient -s -h pool.ntp.org" &>/dev/null
+fi
+
+# Remove gulp-runner container.
+#
+docker rm -f gulp-runner
+
+# Run gulp within gulp-runner.
+#
+docker run \
+	-it \
+	--rm \
+	-v "$DOCKER_CERT_PATH:/certs/docker" \
+	-e "DOCKER_HOST=$DOCKER_HOST" \
+	-e "DOCKER_CERT_PATH=/certs/docker" \
+	--name gulp-runner \
+	quay.io/fullstackmedia/gulp-runner \
+	/bin/bash -c "cd /app && ./node_modules/.bin/gulp $1"

@@ -1,3 +1,5 @@
+Promise = require "bluebird"
+
 module.exports = (Docker) -> 
 
   # List, run, and remove Docker containers.
@@ -7,8 +9,10 @@ module.exports = (Docker) ->
     # Instantiate a `Docker.Api.Container` instance.
     #
     # @param [Object] @container container configuration object
+    # @param [String] @run_key the container key to use for the
+    #   command (typically "run" or "build")
     #
-    constructor: (@container) ->
+    constructor: (@container, @run_key="run") ->
       @api = new Docker.Api.Container(@container)
 
     # List Docker containers.
@@ -25,14 +29,19 @@ module.exports = (Docker) ->
     # @return [Promise<Object>]
     #
     run: (options) ->
-      args = new Docker.Args(@container)
+      args = new Docker.Args(@container, @run_key)
 
       @rm().then(=>
         @api.create(
           args.apiParams()
         )
-      ).then =>
-        @api.start()
+      ).then(
+        (output) =>
+          Promise.props(
+            start: @api.start()
+            id:    output.id
+          )
+      )
 
     # Remove a Docker container.
     #

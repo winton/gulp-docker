@@ -11,10 +11,11 @@ Within your `Gulpfile`, initialize `GulpDocker` with an instance of gulp and con
 
 	new GulpDocker(gulp, {
 		sidekick: {
-			command: "bin/sidekick",
-			env:     { ENV: "production" },
-			git:     "git@github.com:winton/sidekick.git#release",
-			repo:    "quay.io/winton/sidekick"
+			build: "bin/build"
+			run:   "bin/sidekick",
+			env:   { ENV: "production" },
+			git:   "git@github.com:winton/sidekick.git#release",
+			repo:  "quay.io/winton/sidekick"
 		}
 	});
 
@@ -24,17 +25,20 @@ Each key of the object is the container name.
 
 Each value of the object is another object with the following possible keys:
 
-* `command` - The command to run within the Docker container (optional).
+* `build` - The command to run within the Docker container after building the image, before pushing (optional).
 * `env` - Object containing environmental variables (optional).
 * `git` - A git repository URL string (required).
 * `ports` - An array of port strings in "[host-port]:[container-port]" format (optional).
 * `repo` - The Docker repository to push to on build (optional).
+* `run` - The command to run within the Docker container (optional).
 * `volumes` - An array of volume strings in "[host-dir]:[container-dir]:[rw|ro]" format (optional).
 
 ## Tasks
 
 * `docker:image` - Build and optionally push one or more Docker images.
+* `docker:restart` - Restart one or more Docker containers.
 * `docker:run` - Run one or more Docker containers.
+* `docker:stop` - Stop one or more Docker containers.
 
 ## What happens on build?
 
@@ -56,4 +60,4 @@ Each value of the object is another object with the following possible keys:
 ## Docs
 
 	node_modules/.bin/codo lib
-	open docs/index.html
+	open doc/index.html
