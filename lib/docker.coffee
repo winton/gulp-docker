@@ -104,6 +104,8 @@ class Docker
         container
     )
 
+  restart: ->
+    @stop().then(=> @run())
 
   # Asks which Docker containers to run and runs them.
   #
