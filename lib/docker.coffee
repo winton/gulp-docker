@@ -75,14 +75,11 @@ class Docker
   #
   image: ->
     @askForContainers("images to build").then(
-      (containers) =>
-        @askForPush(containers)
+      (containers) => @askForPush(containers)
     ).map(
-      (container) =>
-        @modifyContainer(container)
+      (container) => @modifyContainer(container)
     ).each(
-      (container) =>
-        new Docker.Image(container).build()
+      (container) => new Docker.Image(container).build()
     )
 
   # Changes the container object to make consumption by subclasses
@@ -98,7 +95,7 @@ class Docker
     container.branch ||= "master"
     container.ports  ||= []
 
-    @updateContainerImage(container).then(-> container)
+    container
 
   # Asks which Docker containers to restart and restarts them.
   #
@@ -108,18 +105,24 @@ class Docker
   # Asks which Docker containers to run and runs them.
   #
   run: ->
+    containers     = null
+    missing_images = null
+
     @askForContainers("containers to run").map(
-      (container) =>
-        @modifyContainer(container)
+      (container) => @modifyContainer(container)
     ).then(
-      (containers) =>
-        missing_images = containers.filter(
-          (item) -> !item.image
-        )
-        if missing_images.length
-          @askForPush(containers)
-        else
-          containers
+      (conts) -> containers = conts
+    ).each(
+      (container) => @updateContainerImage(container)
+    ).then(
+      -> containers
+    ).each(
+      (container) =>
+        unless container.image
+          console.log "\n#{container.name} image not built, building now..."
+          new Docker.Image(container).build()
+    ).then(
+      -> containers
     ).each(
       (container) =>
         new Docker.Container(container).run()
@@ -129,11 +132,9 @@ class Docker
   #
   stop: ->
     @askForContainers("containers to stop").map(
-      (container) =>
-        @modifyContainer(container)
+      (container) => @modifyContainer(container)
     ).each(
-      (container) =>
-        new Docker.Container(container).rm()
+      (container) => new Docker.Container(container).rm()
     )
 
   # Add image information to container object.

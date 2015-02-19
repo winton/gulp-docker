@@ -215,7 +215,8 @@ module.exports = (Docker) ->
     # @return [Promise] promise that resolves when command finishes
     #
     waitForFinish: (props) ->
-      process.stdout.write "Waiting for post build command to finish"
+      if @container.build
+        process.stdout.write "Waiting for post build command to finish"
 
-      new Promise (resolve) =>
-        @checkFinished(props.run_sha, resolve)
+        new Promise (resolve) =>
+          @checkFinished(props.run_sha, resolve)

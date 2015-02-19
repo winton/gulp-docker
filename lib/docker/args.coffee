@@ -21,7 +21,7 @@ module.exports = (Docker) ->
     apiParams: ->
       name:  @container.name
       Cmd:   @container[@run_key]
-      Image: "#{@container.repo}:#{@container.tag}"
+      Image: "#{@container.repo}:#{@container.tag || "latest"}"
       Env:   @envs()
       HostConfig:
         Binds: @binds()
