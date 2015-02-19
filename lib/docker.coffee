@@ -105,13 +105,12 @@ class Docker
   # Asks which Docker containers to run and runs them.
   #
   run: ->
-    containers     = null
-    missing_images = null
+    containers = null
 
     @askForContainers("containers to run").map(
       (container) => @modifyContainer(container)
     ).then(
-      (conts) -> containers = conts
+      (containers_tmp) -> containers = containers_tmp
     ).each(
       (container) => @updateContainerImage(container)
     ).then(
@@ -119,7 +118,9 @@ class Docker
     ).each(
       (container) =>
         unless container.image
-          console.log "\n#{container.name} image not built, building now..."
+          console.log(
+            "\n#{container.name} image not built, building now..."
+          )
           new Docker.Image(container).build()
     ).then(
       -> containers

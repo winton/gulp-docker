@@ -139,7 +139,7 @@ module.exports = (Docker) ->
     #
     commitContainer: (props) ->
       if @container.build
-        spawn(@commitCommand(props.run_sha))
+        spawnOut(@commitCommand(props.run_sha))
 
     # Makes the directory to house the app code within `.tmp`.
     #
