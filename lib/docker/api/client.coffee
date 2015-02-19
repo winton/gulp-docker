@@ -98,3 +98,11 @@ module.exports = (Docker) ->
     #
     listContainers: (params) ->
       @client.listContainersAsync(params)
+
+    # List all Docker images.
+    #
+    # @param [Object] params parameters to `Dockerode#listImages`
+    # @return [Array<Object>]
+    #
+    listImages: (params) ->
+      @client.listImagesAsync(params)

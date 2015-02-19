@@ -12,6 +12,8 @@ class Docker
   # @param [Object] container configuration object
   #
   constructor: (@containers) ->
+    @image_api = new Docker.Api.Image()
+
     for name, container of @containers
       container.name = name
 
@@ -95,15 +97,11 @@ class Docker
 
     container.branch ||= "master"
     container.ports  ||= []
-    
-    spawn("docker images").then(
-      (output) =>
-        container.has_image = !!output.match(
-          ///#{container.repo}\s+latest///g
-        )
-        container
-    )
 
+    @updateContainerImage(container).then(-> container)
+
+  # Asks which Docker containers to restart and restarts them.
+  #
   restart: ->
     @stop().then(=> @run())
 
@@ -116,7 +114,7 @@ class Docker
     ).then(
       (containers) =>
         missing_images = containers.filter(
-          (item) -> !item.has_image
+          (item) -> !item.image
         )
         if missing_images.length
           @askForPush(containers)
@@ -136,6 +134,21 @@ class Docker
     ).each(
       (container) =>
         new Docker.Container(container).rm()
+    )
+
+  # Add image information to container object.
+  #
+  # @param [Object] container container object
+  # @return [Promise]
+  #
+  updateContainerImage: (container) ->
+    @image_api.list().then(
+      (images) =>
+        container.image = images.filter(
+          (image) =>
+            repo_tag = "#{container.repo}:latest"
+            image.RepoTags.indexOf(repo_tag) > -1
+        )[0]
     )
 
 require("./docker/api")(Docker)
