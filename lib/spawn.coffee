@@ -16,29 +16,41 @@ class Spawn
   # @option options [String] cwd current working directory of the child process
   #
   constructor: (@options={}) ->
-    @options.cwd = path.normalize(
-      "#{__dirname}/../#{@options.cwd || ""}"
-    )
 
   # @param [String] cmd command to execute
   # @return [ChildProcess]
   #
-  childProcess: (cmd) ->
+  childProcess: (cmd, options) ->
     cmd = cmd.split(/\s+/)
 
     child_process.spawn(
       cmd.shift()
       cmd
-      @options
+      options
     )
+
+  # Normalize the cwd option.
+  #
+  # @param [Object] options `child_process.spawn` options
+  #
+  resolveCwd: (options) ->
+    if options.cwd
+      options.cwd = path.normalize(
+        "#{process.cwd()}/#{options.cwd}"
+      )
 
   # Promisify `child_process.spawn`.
   #
   # @param [String] cmd command to execute
   # @return [Promise<String,Number>]
   #
-  spawn: (cmd) ->
-    proc   = @childProcess(cmd)
+  spawn: (cmd, options={}) ->
+    options.cwd   ||= @options.cwd
+    options.stdio ||= @options.stdio
+
+    @resolveCwd(options)
+
+    proc   = @childProcess(cmd, options)
     output = ""
 
     if proc.stdout

@@ -30,7 +30,10 @@ module.exports = (Docker) ->
     #   finishes 
     #
     appSha: ->
-      spawnOut(@commands.app_sha)
+      spawnOut(
+        @commands.app_sha
+        cwd: ".tmp/#{@container.name}"
+      )
 
     # Builds an image.
     #
