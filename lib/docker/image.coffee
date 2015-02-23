@@ -158,7 +158,8 @@ module.exports = (Docker) ->
     #
     pushImage: (props) ->
       if @container.push
-        spawn(@pushImageCommand(props.sha))
+        spawn(@pushImageCommand(props.sha)).then =>
+          spawn(@pushImageCommand("latest"))
 
     # Generates the `docker push` command.
     #
