@@ -105,25 +105,8 @@ class Docker
   # Asks which Docker containers to run and runs them.
   #
   run: ->
-    containers = null
-
     @askForContainers("containers to run").map(
       (container) => @modifyContainer(container)
-    ).then(
-      (containers_tmp) -> containers = containers_tmp
-    ).each(
-      (container) => @updateContainerImage(container)
-    ).then(
-      -> containers
-    ).each(
-      (container) =>
-        unless container.image
-          console.log(
-            "\n#{container.name} image not built, building now..."
-          )
-          new Docker.Image(container).build()
-    ).then(
-      -> containers
     ).each(
       (container) =>
         new Docker.Container(container).run()
@@ -136,21 +119,6 @@ class Docker
       (container) => @modifyContainer(container)
     ).each(
       (container) => new Docker.Container(container).rm()
-    )
-
-  # Add image information to container object.
-  #
-  # @param [Object] container container object
-  # @return [Promise]
-  #
-  updateContainerImage: (container) ->
-    @image_api.list().then(
-      (images) =>
-        container.image = images.filter(
-          (image) =>
-            repo_tag = "#{container.repo}:latest"
-            image.RepoTags.indexOf(repo_tag) > -1
-        )[0]
     )
 
 require("./docker/api")(Docker)
