@@ -1,6 +1,6 @@
 {
   "name": "gulp-docker",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "lib/gulp-docker.js",
   "dependencies": {
     "bluebird": "^2.3.11",
