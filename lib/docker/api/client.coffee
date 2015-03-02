@@ -22,6 +22,24 @@ module.exports = (Docker) ->
 
       Promise.promisifyAll(@client)
 
+    # Generates a Docker API authConfig object.
+    #
+    # @param [String] Docker repository
+    # @return [Object] Docker authConfig object
+    #
+    authObject: (repo) ->
+      [ registry, repo, image ] = repo.split("/")
+
+      cfg = @dockerCfg()[registry]
+
+      auth = new Buffer(cfg.auth, "base64")
+      [ username, password ] = auth.toString().split(":")
+
+      username: username
+      password: password
+      email: cfg.email
+      serveraddress: registry
+
     # Create a Docker container.
     #
     # @param [Object] params parameters to `Dockerode#createContainer`
@@ -29,6 +47,34 @@ module.exports = (Docker) ->
     #
     createContainer: (params) ->
       @client.createContainerAsync(params)
+
+    # Create a Docker image.
+    #
+    # @param [Object] params parameters to `Dockerode#createImage`
+    # @return [Container]
+    #
+    createImage: (params) ->
+      response = []
+      new Promise (resolve) =>
+        @client.createImage(
+          @authObject(params.fromImage)
+          params
+          (error, output) ->
+            output.on(
+              "data"
+              (buf) ->
+                response.push JSON.parse(buf.toString())
+            )
+            output.on("end", -> resolve(output))
+        )
+
+    # Read the .dockercfg from the home directory and parse it.
+    #
+    # @return [Object]
+    #
+    dockerCfg: ->
+      cfg  = fs.readFileSync("#{process.env.HOME}/.dockercfg").toString()
+      JSON.parse(cfg)
 
     # Connect to Docker using a certificate if `DOCKER_CERT_PATH`
     # env variable present.

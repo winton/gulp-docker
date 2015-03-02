@@ -105,8 +105,17 @@ class Docker
   # Asks which Docker containers to run and runs them.
   #
   run: ->
+    containers = null
+
     @askForContainers("containers to run").map(
       (container) => @modifyContainer(container)
+    ).then(
+      (conts) -> containers = conts
+    ).each(
+      (container) =>
+        new Docker.Image(container).create()
+    ).then(
+      -> containers
     ).each(
       (container) =>
         new Docker.Container(container).run()

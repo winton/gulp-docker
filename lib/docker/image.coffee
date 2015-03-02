@@ -13,6 +13,7 @@ module.exports = (Docker) ->
     # @param [Object] @container container object
     #
     constructor: (@container) ->
+      @api      = new Docker.Api.Image(@container)
       @commands =
         app_sha:   "git rev-parse HEAD"
         clone_app:
@@ -143,6 +144,13 @@ module.exports = (Docker) ->
     commitContainer: (props) ->
       if @container.build
         spawnOut(@commitCommand(props.run_sha))
+
+    # Create the Docker image if it should already exist.
+    #
+    # @return [Promise] promise that resolves when API call finishes
+    #
+    create: ->
+      @api.create()
 
     # Makes the directory to house the app code within `.tmp`.
     #
