@@ -73,7 +73,9 @@ module.exports = (Docker) ->
     # @return [Object]
     #
     dockerCfg: ->
-      cfg  = fs.readFileSync("#{process.env.HOME}/.dockercfg").toString()
+      cfg_dir = process.env.DOCKER_CONFIG_DIR || process.env.HOME
+      cfg     = fs.readFileSync("#{cfg_dir}/.dockercfg").toString()
+
       JSON.parse(cfg)
 
     # Connect to Docker using a certificate if `DOCKER_CERT_PATH`
