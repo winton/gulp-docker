@@ -21,12 +21,15 @@ class GulpDocker
   #
   constructor: (@gulp, @containers) ->
     @silenced = []
-    @tasks    = requireDirectory(module, "./tasks")
+    @tasks    = requireDirectory(module, "./gulp_docker/tasks")
     
     fn(@gulp, @containers) for task, fn of @tasks
 
     if @silenced.indexOf(process.argv[2]) > -1
       @turnOffGulpOutput()
+
+  @ask: (question, format) ->
+    new GulpDocker.Ask().ask(question, format)
 
   # Silences gulp output, while still allowing `console.log` from tasks.
   #
@@ -58,5 +61,8 @@ class GulpDocker
   #
   turnOnGulpOutput: ->
     console.log = @log if @log
+
+require("./gulp_docker/ask")(GulpDocker)
+require("./gulp_docker/docker")(GulpDocker)
 
 module.exports = GulpDocker

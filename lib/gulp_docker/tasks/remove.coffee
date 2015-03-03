@@ -1,7 +1,9 @@
-spawn    = require("../spawn")()
-spawnOut = require("../spawn")("inherit")
+DockerRemote = require "docker-remote"
 
 module.exports = (gulp, containers) ->
+
+  spawn    = DockerRemote.spawn("inherit")
+  spawnOut = DockerRemote.spawn()
 
   removeImages = ->
     spawn("docker images -q").then (output) ->

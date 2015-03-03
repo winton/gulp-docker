@@ -4,14 +4,21 @@
 #
 docker rm -f gulp-runner
 
+# Copy .dockercfg
+#
+mkdir -p .tmp/dockercfg
+cp ~/.dockercfg .tmp/dockercfg
+
 # Run gulp within gulp-runner.
 #
 docker run \
 	-it \
 	--rm \
-	-v "$DOCKER_CERT_PATH:/certs/docker" \
+	-v "$DOCKER_CERT_PATH:/docker/certs" \
+	-v "$(pwd)/.tmp/dockercfg:/docker/dockercfg" \
+	-e "DOCKER_CERT_PATH=/docker/certs" \
+	-e "DOCKER_CONFIG_DIR=/docker/dockercfg" \
 	-e "DOCKER_HOST=$DOCKER_HOST" \
-	-e "DOCKER_CERT_PATH=/certs/docker" \
 	--name gulp-runner \
 	quay.io/fullstackmedia/gulp-runner \
 	/bin/bash -c "cd /app && ./node_modules/.bin/gulp $1"
