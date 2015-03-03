@@ -1,29 +1,27 @@
+path = require "path"
+
 module.exports = (Docker) -> 
 
   # Generates arguments for Docker CLI and remote API.
   #
   class Docker.Args
 
-    # Initializes a container name, command to run, env variables,
-    # and ports.
+    # Initializes `@container`.
     #
-    # @param [String] @name name of Docker container
-    # @param [Object] @container `command`, `container`, `env`, `ports`
+    # @param [Object] @container container object
+    # @param [String] @run_key the container key to use for the
+    #  command (typically "run" or "build")
     #
-    constructor: (@container={}) ->
-      @command   = @container.command   || "bin/#{@name}"
-      @container = @container.container || "#{Docker.repoName(@name)}-#{@name}"
-      @env       = @container.env       || process.env
-      @ports     = @container.ports     || []
+    constructor: (@container, @run_key="run") ->
 
     # Generates parameters for a Docker remote API call.
     #
     # @return [Object]
     #
     apiParams: ->
-      name:  @container
-      Cmd:   @command
-      Image: Docker.repoName(@name)
+      name:  @container.name
+      Cmd:   @container[@run_key]
+      Image: "#{@container.repo}:#{@container.tag || "latest"}"
       Env:   @envs()
       HostConfig:
         Binds: @binds()
@@ -36,18 +34,10 @@ module.exports = (Docker) ->
     # @return [Object]
     #
     binds: ->
-      binds = []
-      binds.push(
-        "#{@env.APP_PATH || process.cwd()}:/app"
-      ) if !@env.ENV || @env.ENV == "development"
-      binds.push(
-        "#{@env.DOCKER_CERT_PATH}:/certs/docker"
-      ) if @env.DOCKER_CERT_PATH
-      binds.push(
-        "#{@env.DOCKER_SOCKET_PATH}:/var/run/host"
-      ) if @env.DOCKER_SOCKET_PATH
-
-      binds
+      @container.volumes.map (volume) ->
+        [ host, container ] = volume.split(":")
+        host = path.resolve(host)
+        "#{host}:#{container}"
 
     # Generates parameters for a Docker CLI call.
     #
@@ -72,7 +62,7 @@ module.exports = (Docker) ->
           )
 
       params.push(Docker.repoName(@name))
-      params.concat(@command)
+      params.concat(@container[@run_key])
 
     # Generate environment variables to be passed to the container.
     #
@@ -80,24 +70,10 @@ module.exports = (Docker) ->
     #
     envs: ->
       envs = []
-      envs.push(
-        "DOCKER_HOST=#{@env.DOCKER_HOST}"
-      ) if @env.DOCKER_HOST && @env.ENV != "production"
-      envs.push(
-        "DOCKER_CERT_PATH=/certs/docker"
-      ) if @env.DOCKER_CERT_PATH && @env.ENV != "production"
-      envs.push(
-        "DOCKER_SOCKET_PATH=/var/run/host"
-      ) if @env.DOCKER_SOCKET_PATH || @env.ENV == "production"
-      envs.push(
-        "ENV=#{@env.ENV}"
-      ) if @env.ENV
-      envs.push(
-        "AWS_ACCESS_KEY_ID=#{@env.AWS_ACCESS_KEY_ID}"
-      ) if @env.AWS_ACCESS_KEY_ID
-      envs.push(
-        "AWS_SECRET_ACCESS_KEY=#{@env.AWS_SECRET_ACCESS_KEY}"
-      ) if @env.AWS_SECRET_ACCESS_KEY
+
+      for key, value of @container.env
+        envs.push("#{key}=#{value}")
+
       envs
 
     # Generate an object for the `ExposedPorts` option of the Docker
@@ -117,7 +93,7 @@ module.exports = (Docker) ->
     #
     portBindings: ->
       ports = {}
-      for port in @ports
-        [ host_port, container_port ] = port
+      for port in @container.ports
+        [ host_port, container_port ]  = port.split(":")
         ports["#{container_port}/tcp"] = [ HostPort: host_port ]
       ports

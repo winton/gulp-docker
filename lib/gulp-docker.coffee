@@ -12,9 +12,9 @@ class GulpDocker
   #   gulp = require("gulp");
   #   new GulpDocker(gulp, {
   #     sidekick: {
-  #       app: "git@github.com:winton/sidekick.git#release",
-  #       command: "bin/sidekick",
-  #       env: { ENV: "production" },
+  #       app:  "git@github.com:winton/sidekick.git#release",
+  #       run:  "bin/sidekick",
+  #       env:  { ENV: "production" },
   #       repo: "quay.io/winton/sidekick"
   #     }
   #   });

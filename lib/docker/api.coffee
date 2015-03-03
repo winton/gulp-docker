@@ -6,3 +6,4 @@ module.exports = (Docker) ->
 
   require("./api/client")(Docker)
   require("./api/container")(Docker)
+  require("./api/image")(Docker)

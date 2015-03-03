@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Remove gulp-runner container.
+#
+docker rm -f gulp-runner
+
+# Run gulp within gulp-runner.
+#
+docker run \
+	-it \
+	--rm \
+	-v "$DOCKER_CERT_PATH:/certs/docker" \
+	-e "DOCKER_HOST=$DOCKER_HOST" \
+	-e "DOCKER_CERT_PATH=/certs/docker" \
+	--name gulp-runner \
+	quay.io/fullstackmedia/gulp-runner \
+	/bin/bash -c "cd /app && ./node_modules/.bin/gulp $1"

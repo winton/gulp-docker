@@ -2,5 +2,5 @@ Docker = require "../docker"
 
 module.exports = (gulp, containers) ->
 
-  gulp.task "docker:run", ->
-    new Docker(containers).run()
+  gulp.task "docker:restart", ->
+    new Docker(containers).restart()
