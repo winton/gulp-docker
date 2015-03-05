@@ -6,7 +6,6 @@
     "bluebird": "^2.3.11",
     "coffee-script": "^1.8.0",
     "docker-remote": "",
-    "dockerode": "^2.0.4",
     "gulp": "^3.8.10",
     "require-directory": "^2.0.0"
   },
