@@ -13,8 +13,7 @@ module.exports = (GulpDocker) ->
     # @param [Object] container configuration object
     #
     constructor: (@containers) ->
-      @ask       = GulpDocker.ask
-      @image_api = new DockerRemote.Api.Image()
+      @ask = GulpDocker.ask
 
       for name, container of @containers
         container.name = name
