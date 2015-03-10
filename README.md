@@ -26,11 +26,14 @@ Each key of the object is the container name.
 Each value of the object is another object with the following possible keys:
 
 * `build` - The command to run within the Docker container after building the image, before pushing (optional).
+* `dockerfile` - The directory to discover the Dockerfile (optional).
 * `env` - Object containing environmental variables (optional).
-* `git` - A git repository URL string (required).
+* `git` - A git repository URL string (optional).
+* `name` - The name of the container (required).
 * `ports` - An array of port strings in "[host-port]:[container-port]" format (optional).
 * `repo` - The Docker repository to push to on build (optional).
 * `run` - The command to run within the Docker container (optional).
+* `tags` - An array of tags to use when pushing the image.
 * `volumes` - An array of volume strings in "[host-dir]:[container-dir]:[rw|ro]" format (optional).
 
 ## Tasks
