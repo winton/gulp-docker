@@ -26,18 +26,29 @@ module.exports = (GulpDocker) ->
     #   containers
     #
     askForContainers: (question_type) ->
-      [ containers, questions ] = @containerStrings()
+      image = process.env.IMAGE
 
-      questions.push("\nEnter number(s) of #{question_type} (enter for all):")
+      if image
+        container = @containers[image]
 
-      @ask(questions.join("\n"), /(\d|\s*)/).then(
-        (input) -> 
-          if input == ""
-            containers
-          else
-            input.match(/\d/g).map (index) ->
-              containers[parseInt(index) - 1]
-      )
+        unless container
+          console.log "\nCould not find IMAGE \"#{image}\".\n"
+          process.exit(1)
+        
+        Promise.resolve(container)
+      else
+        [ containers, questions ] = @containerStrings()
+
+        questions.push("\nEnter number(s) of #{question_type} (enter for all):")
+
+        @ask(questions.join("\n"), /(\d|\s*)/).then(
+          (input) -> 
+            if input == ""
+              containers
+            else
+              input.match(/\d/g).map (index) ->
+                containers[parseInt(index) - 1]
+        )
 
     # Helper method to ask if the user wants to push images to
     # their Docker registry.
@@ -47,13 +58,21 @@ module.exports = (GulpDocker) ->
     #   containers
     #
     askForPush: (containers) ->
-      @ask("Push to docker registry?", /[yYnN]/).then(
-        (output) ->
-          console.log ""
-          for container in containers
-            container.push = output.match(/[yY]/)
-          containers
-      )
+      push = process.env.PUSH
+
+      if push
+        for container in containers
+          container.push = push
+
+        Promise.resolve(containers)
+      else
+        @ask("Push to docker registry?", /[yYnN]/).then(
+          (output) ->
+            console.log ""
+            for container in containers
+              container.push = output.match(/[yY]/)
+            containers
+        )
 
     # Turns `@containers` into an array of objects and strings for
     # questioning.

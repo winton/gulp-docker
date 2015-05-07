@@ -33,7 +33,7 @@ Each value of the object is another object with the following possible keys:
 * `ports` - An array of port strings in "[host-port]:[container-port]" format (optional).
 * `repo` - The Docker repository to push to on build (optional).
 * `run` - The command to run within the Docker container (optional).
-* `tags` - An array of tags to use when pushing the image.
+* `tags` - An array of tags to use when pushing the image (required).
 * `volumes` - An array of volume strings in "[host-dir]:[container-dir]:[rw|ro]" format (optional).
 
 ## Tasks

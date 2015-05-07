@@ -11,7 +11,7 @@ new GulpDocker(gulp, {
 		git:        "git@github.com:winton/gulp-docker-test.git",
 		ports:      [ "8080:8080" ],
 		repo:       "quay.io/fullstackmedia/gulp-docker-test",
-		tags:       [ "test" ],
+		tags:       [ env ],
 		volumes:    [ ".:/app" ]
 	}
 });
