@@ -35,7 +35,7 @@ module.exports = (GulpDocker) ->
           console.log "\nCould not find IMAGE \"#{image}\".\n"
           process.exit(1)
         
-        Promise.resolve(container)
+        Promise.resolve([ container ])
       else
         [ containers, questions ] = @containerStrings()
 
