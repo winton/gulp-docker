@@ -62,7 +62,7 @@ module.exports = (GulpDocker) ->
 
       if push
         for container in containers
-          container.push = push
+          container.push = push == "1"
 
         Promise.resolve(containers)
       else
