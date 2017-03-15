@@ -56,6 +56,12 @@ Each value of the object is another object with the following possible keys:
 * Generate run arguments from container options.
 * Call `docker run` with arguments.
 
+## How to avoid user prompts
+
+Simply set the following two environment variables:
+* IMAGE - string, the name of the image to build
+* PUSH - int, enter '1' for auto push
+
 ## Dev setup
 
 	npm install
