@@ -62,6 +62,13 @@ Simply set the following two environment variables:
 * IMAGE - string, the name of the image to build
 * PUSH - int, enter '1' for auto push
 
+You can set these in your Gulp task like so:
+```
+process.env.IMAGE = 'Image name here';
+process.env.PUSH = 1;
+```
+or whereever you set your other environment variables.
+
 ## Dev setup
 
 	npm install
