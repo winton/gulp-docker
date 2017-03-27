@@ -46,7 +46,7 @@ module.exports = (GulpDocker) ->
             if input == ""
               containers
             else
-              input.match(/\d/g).map (index) ->
+              input.match(/\d+/g).map (index) ->
                 containers[parseInt(index) - 1]
         )
 
