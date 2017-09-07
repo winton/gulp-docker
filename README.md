@@ -11,7 +11,7 @@ Within your `Gulpfile`, initialize `GulpDocker` with an instance of gulp and con
 
 	new GulpDocker(gulp, {
 		sidekick: {
-			build: "bin/build"
+			build: "bin/build",
 			run:   "bin/sidekick",
 			env:   { ENV: "production" },
 			git:   "git@github.com:winton/sidekick.git#release",
